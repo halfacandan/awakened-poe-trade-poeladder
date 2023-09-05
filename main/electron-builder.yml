@@ -6,9 +6,20 @@ files:
   - "package.json"
   - from: "dist"
     to: "."
-    filter: ["main.js", "vision.js"]
+    filter: ["main.js", "vision.js","icon.ico","index.html","icon.png"]
   - from: "../renderer/dist"
     to: "."
+  - from: "dist/icons"
+    to: "./icons"
+  - from: "dist/images"
+    to: "./images"
+  - from: "dist/data"
+    to: "./data"
+  - from: "dist/assets"
+    to: "./assets"
+  - from: "dist/.icon-ico"
+    to: "./.icon-ico"
+    
 extraMetadata:
   main: "main.js"
 nsis:
