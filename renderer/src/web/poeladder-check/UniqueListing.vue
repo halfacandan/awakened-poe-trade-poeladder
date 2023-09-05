@@ -56,7 +56,7 @@
 
                 fetch(url,  {
                     headers: {
-                        'jwt-auth': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjcmVhdGVkIjoiV2l0aCBsb3ZlIiwic2VjdXJlZCI6IldpdGggc3RpY2t5LXRhcGUiLCJ1cGRhdGVkIjoiRnJvbSB0aW1lIHRvIHRpbWUiLCJ0b2tlbkd1aWQiOiI4NmE1NWZmMC00ODc5LTQzNmUtYWYzZi1jNmNmZThhNDkxZWQiLCJwYXNzcGhyYXNlIjpudWxsfQ.ZA4C4JGZogyjH4aFatKUCE0e3G3b6WJ73MZ3lZd36XY"
+                        'jwt-auth': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjcmVhdGVkIjoiV2l0aCBsb3ZlIiwic2VjdXJlZCI6IldpdGggc3RpY2t5LXRhcGUiLCJ1cGRhdGVkIjoiRnJvbSB0aW1lIHRvIHRpbWUiLCJ0b2tlbkd1aWQiOiI0ODFjZjQ1OS0xOTRlLTQxMTMtYWQxNy0yMGQ1OGNmMjJlNTUiLCJwYXNzcGhyYXNlIjpudWxsfQ.GjjC079qiOw8RxpUHFF4YLeoudYjijjzbLf4H8saTyQ"
                     }
                 })
                 .then(async response => {
