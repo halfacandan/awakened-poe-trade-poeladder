@@ -4,18 +4,46 @@
 
 ### Development
 
-#### How to create the installer
+### 1. Set up the project
 
-Only run steps 3 and 7 the first time you set up the project:
 1) Clone project into VSCode
 2) cd renderer
 3) npm install
-4) npm run build
-5) npm run make-index-files
-6) cd ..\main
-7) npm install
-8) npm run build
-9) npm run package
+4) cd ..\main
+5) npm install
+
+### 2. How to build the project
+
+Complete the steps in **1. Set up the project** prior to attempting this
+
+1) Open the project in VSCode
+2) cd renderer
+3) npm run build
+4) npm run make-index-files
+5) cd ..\main
+6) npm run build
+7) npm run package
+
+### 3. How to run in Dev mode
+
+Complete the steps in **1. Set up the project** prior to attempting this
+
+1) Open a cmd window
+2) cd ..\awakened-poe-trade-poeladder\renderer
+3) npm run dev
+4) Leave that window running
+5) Open the project in VSCode
+6) cd main
+7) npm run dev
+8) Start PoE
+
+#### 4. How to create the installer
+
+Complete the steps in **2. How to build the project** prior to attempting this
+
+1) Open the project in VSCode
+2) cd main
+3) npm run package
 
 #### How to debug the installer:
 The packaging process is dependent upon two separate builds: the "renderer" folder and the "main" folder. It then packages both of these up in to **%AppData%\Local\Programs\Awakened PoE Trade\resources\app.asar** based on the commands in **electron-builder.yml**.
