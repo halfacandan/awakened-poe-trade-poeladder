@@ -1,24 +1,87 @@
-# ![Awakener's Orb](https://web.poecdn.com/image/Art/2DItems/Currency/TransferOrb.png) Awakened PoE Trade
+# ![Awakener's Orb](https://web.poecdn.com/image/Art/2DItems/Currency/TransferOrb.png) Awakened PoE Trade - PoE Ladder Edition
 
-[![](https://user-images.githubusercontent.com/4292308/153364874-dde23599-278c-4350-8d86-dadbc4b978b3.svg)](https://somsubhra.github.io/github-release-stats/?username=SnosMe&repository=awakened-poe-trade)
-[![](https://user-images.githubusercontent.com/4292308/153364769-e4fe1e82-1bbc-46ac-8a3c-f5a98a5667cc.svg)](https://patreon.com/awakened_poe_trade)
-[![](https://user-images.githubusercontent.com/4292308/153364565-7a545d26-e617-4a33-a919-ff90d8feda3d.svg)](https://github.com/SnosMe/awakened-poe-trade/issues/22)
+### Introduction
 
+[PoE Ladder](https://poeladder.com/) is a website that lets you track your unique item collections in Path of Exile's various Solo-Self Found leagues.
 
-➡ [Download for Windows & Linux](https://snosme.github.io/awakened-poe-trade/download) ⬅
+This fork of [SnosMe's awakened-poe-trade app](https://github.com/SnosMe/awakened-poe-trade) replaces the price-checking feature with a lookup of PoE Ladder data for your account.  This will let you:
+  - Check whether you already own a unique in a selected league
+  - Compare the stats of the unique that you just found with the one that you own
+  - Do cross-league lookups e.g. Find an item in a temporary league like SSF Ancestor and look it up in your SSF Standard collection
 
-## Tool showcase
+To get started, you can either build the app yourself using the instructions below or [join the PoE Ladder Discord](https://discord.gg/YppDk6b92c) to get the latest pre-build installer for the app.
 
-| Gem | Rare | Unique | Currency |
-|-----|------|--------|----------|
-| ![](https://i.imgur.com/LTsH2DZ.png) | ![](https://i.imgur.com/2XL5Wl8.png) | ![](https://i.imgur.com/UTV6prE.png) | ![](https://i.imgur.com/dQ9Sns6.png) |
+### Using the App
+
+Once you have installed the app, just hover over a unique item in the PoE client and use the **Ctrl + D** command to look up the item.
+
+If you haven't set up your account in the app then you will see a set of instructions like those shown below:
+
+![](./docs/guide/guide_00_poe_login_01_check.png)
+
+Here you can see an example of a unique in SSF Ancestor being compared to the owned version in SSF Standard:
+
+![](./docs/guide/guide_00_poe_compare_02_temp_to_standard.png)
+
+If you don't already have the unique in a league then you'll see an error message like the one below:
+
+![](./docs/guide/guide_00_poe_compare_03_temp_to_standard_not_found.png)
 
 ### Development
 
-Follow instructions similar to CI [.github/workflows/main.yml](https://github.com/SnosMe/awakened-poe-trade/blob/master/.github/workflows/main.yml)
+### 1. Set up the project
+
+1) Clone project into VSCode
+2) cd renderer
+3) npm install
+4) cd ..\main
+5) npm install
+
+### 2. How to build the project
+
+Complete the steps in **1. Set up the project** prior to attempting this
+
+1) Open the project in VSCode
+2) cd renderer
+3) npm run build
+4) npm run make-index-files
+5) cd ..\main
+6) npm run build
+7) npm run package
+
+### 3. How to run in Dev mode
+
+Complete the steps in **1. Set up the project** prior to attempting this
+
+1) Open a cmd window
+2) cd ..\awakened-poe-trade-poeladder\renderer
+3) npm run dev
+4) Leave that window running
+5) Open the project in VSCode
+6) cd main
+7) npm run dev
+8) Start PoE
+
+### 4. How to create the installer
+
+Complete the steps in **2. How to build the project** prior to attempting this
+
+1) Open the project in VSCode
+2) cd main
+3) npm run package
+
+### 5. How to debug an installation
+
+The packaging process is dependent upon two separate builds: the "renderer" folder and the "main" folder. It then packages both of these up in to **%AppData%\Local\Programs\Awakened PoE Trade\resources\app.asar** based on the commands in **electron-builder.yml**.
+
+You can manually edit the compiled app.asar file by:
+1) [Installing 7-Zip (64-bit)](https://www.7-zip.org/download.html)
+2) [Installing the "Asar7z" plugin (64-bit)](https://www.tc4shell.com/en/7zip/asar/)
+3) Extracting the files/folders from your **app.asar** file then compare them to a working version
 
 ### Acknowledgments
 
+- [SnosMe (Alexander Drozdov)](https://github.com/SnosMe)
 - [libuiohook](https://github.com/kwhat/libuiohook)
 - [RePoE](https://github.com/brather1ng/RePoE)
 - [poeprices.info](https://www.poeprices.info/)

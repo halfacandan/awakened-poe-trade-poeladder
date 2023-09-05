@@ -49,7 +49,7 @@
 import { defineComponent, PropType, watch, ref, nextTick, computed, ComponentPublicInstance } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ItemRarity, ItemCategory, ParsedItem } from '@/parser'
-import TradeListing from './trade/TradeListing.vue'
+import TradeListing from '../poeladder-check/UniqueListing.vue'
 import TradeBulk from './trade/TradeBulk.vue'
 import TradeLinks from './trade/TradeLinks.vue'
 import { apiToSatisfySearch, getTradeEndpoint } from './trade/common'
