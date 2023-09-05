@@ -9,7 +9,8 @@ files:
     filter: ["main.js", "vision.js"]
   - from: "../renderer/dist"
     to: "."
-
+  - from: "../renderer/public/data"
+    to: "./data"
 extraMetadata:
   main: "main.js"
 nsis:
