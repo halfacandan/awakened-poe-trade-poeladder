@@ -4,15 +4,21 @@
 
 ### Development
 
-#### How to create the installer:
+#### How to create the installer
+
+Only run steps 3 and 7 the first time you set up the project:
 1) Clone project into VSCode
-2) cd main
+2) cd renderer
 3) npm install
 4) npm run build
-5) npm run package
+5) npm run make-index-files
+6) cd ..\main
+7) npm install
+8) npm run build
+9) npm run package
 
 #### How to debug the installer:
-The package misses out crucial files when packaging the app. These are packages up in to **%AppData%\Local\Programs\Awakened PoE Trade\resources\app.asar**.
+The packaging process is dependent upon two separate builds: the "renderer" folder and the "main" folder. It then packages both of these up in to **%AppData%\Local\Programs\Awakened PoE Trade\resources\app.asar** based on the commands in **electron-builder.yml**.
 
 You can manually edit the app.asar file by:
 1) Installing 7-Zip (64-bit): https://www.7-zip.org/download.html
