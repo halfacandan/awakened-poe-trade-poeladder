@@ -9,11 +9,17 @@
       <online-filter v-if="unique" :by-time="true" :filters="filters" />
       <div class="flex-1"></div>
     </div>
-    <div v-if="unique">
-        <p>{{ unique.data }}</p>
+    <div v-if="!accountName">
+        <p>Please add your Account Name to the tool's configuration:</p>
+        <ul>
+            <li>Open the <strong>Settings</strong> menu with <strong>Shift + Space</strong></li>
+            <li>Go to the <strong>Price Check</strong> tab</li>
+            <li>Enter your PoE account's name in the <strong>Account Name</strong> textbox</li>
+            <li>Click the <strong>Save> button at the foot of the form</strong></li>
+        </ul>
     </div>
-    <div class="layout-column overflow-y-auto overflow-x-hidden">
-        <p>This is a test3</p>
+    <div v-if="unique" class="layout-column overflow-y-auto overflow-x-hidden">
+        <div v-html="unique.data"></div>
     </div>
   </div>
 </template>
@@ -21,76 +27,45 @@
 <script lang="ts">
 
     interface UniqueItem {
-        name: string;
-        data: string;
+        name: string | null;
+        data: string | null;
     }
 
-    import { defineComponent, computed, PropType, shallowRef } from 'vue'
+    import { defineComponent, PropType, shallowRef } from 'vue'
     import { useI18nNs } from '@/web/i18n'
-    import { PricingResult } from '../price-check/trade/pathofexile-trade'
+    import { AppConfig } from '@/web/Config'
     import { ItemFilters, StatFilter } from '../price-check/filters/interfaces'
     import { ParsedItem } from '@/parser'
-    import OnlineFilter from '../price-check/trade/OnlineFilter.vue'
-    import TradeLinks from '../price-check/trade/TradeLinks.vue'
 
-    function useTradeApi () {
+    function usePoeLadderApi () {
 
         const error = shallowRef<string | null>(null)
         const searchResult = shallowRef<UniqueItem | null>(null)
-        const fetchResults = shallowRef<PricingResult[]>([])
 
-        const groupedResults = computed(() => {
+        async function search (uniqueName: string|null = null, uniqueIdentfier: string|null = null, accountName: string|null = null, ladderIdentifier: string|null = null) {
 
-            const out: Array<PricingResult & { listedTimes: number }> = []
-            for (const result of fetchResults.value) {
-                if (result == null) break
-                if (out.length === 0) {
-                    out.push({ listedTimes: 1, ...result })
-                    continue
-                }
-                const existingRes = out.find((added, idx) =>
-                    (
-                        added.accountName === result.accountName &&
-                        added.priceCurrency === result.priceCurrency &&
-                        added.priceAmount === result.priceAmount
-                    ) ||
-                    (
-                        added.accountName === result.accountName &&
-                        (out.length - idx) <= 2 // last or prev
-                    )
-                )
-                if (existingRes) {
-                    if (existingRes.stackSize) {
-                        existingRes.stackSize += result.stackSize!
-                    } else {
-                        existingRes.listedTimes += 1
+            var url = `https://poeladder.com/api/v1/users/${accountName}/ladders/${ladderIdentifier}/uniques/${uniqueIdentfier}/?disambiguation=1`
+console.log(url);
+            if((uniqueIdentfier ?? "").trim() != "" &&  (accountName ?? "").trim() != "" && (ladderIdentifier ?? "").trim() != ""){
+
+                fetch(url,  {
+                    headers: {
+                        'jwt-auth': "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjcmVhdGVkIjoiV2l0aCBsb3ZlIiwic2VjdXJlZCI6IldpdGggc3RpY2t5LXRhcGUiLCJ1cGRhdGVkIjoiRnJvbSB0aW1lIHRvIHRpbWUiLCJ0b2tlbkd1aWQiOiI4NmE1NWZmMC00ODc5LTQzNmUtYWYzZi1jNmNmZThhNDkxZWQiLCJwYXNzcGhyYXNlIjpudWxsfQ.ZA4C4JGZogyjH4aFatKUCE0e3G3b6WJ73MZ3lZd36XY"
                     }
-                } else {
-                    out.push({ listedTimes: 1, ...result })
-                }
+                })
+                .then(async response => {
+                    searchResult.value = {
+                        name: uniqueName,
+                        data: await response.text()
+                    };
+                });
             }
-            return out
-        })
-
-        async function search (item: ParsedItem) {
-            
-            if(item.info.namespace == "UNIQUE"){
-                console.log(item.info.name);
-                searchResult.value = {
-                    name: item.info.name,
-                    data: "this is a test of data"
-                };
-                return await item.info.name + " - " + item.info.unique;
-            }
-
-            return null;
         }
 
-        return { error, searchResult, groupedResults, search };
+        return { error, searchResult, search };
     }
 
     export default defineComponent({
-        components: { OnlineFilter, TradeLinks },
         props: {
             filters: {
                 type: Object as PropType<ItemFilters>,
@@ -107,14 +82,28 @@
         },
         setup (props) {
 
-            const { error, searchResult, search } = useTradeApi();
+            const { error, searchResult, search } = usePoeLadderApi();
             const { t } = useI18nNs('trade_result');
 
             return {
                 t,
                 unique: searchResult,
-                execSearch: () => { 
-                    search(props.item)
+                accountName: AppConfig().accountName,
+                execSearch: async () => {
+
+                    if(props.item.info.namespace == "UNIQUE"){
+
+                        const uniqueName = props.item.info.name;
+                        const uniqueIdentfier = decodeURIComponent(uniqueName).replace(/[^a-zA-Z0-9_\s]/g,'').replace(/\s/g, "_");
+                        const ladderIdentifier = "SSF_" + AppConfig().leagueId;
+                        const accountName = AppConfig().accountName;
+
+                        await search(uniqueName, uniqueIdentfier, accountName, ladderIdentifier);
+
+                    } else {
+
+                        await search();
+                    }
                 },
                 error
             };
