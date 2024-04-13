@@ -12,7 +12,7 @@ import { linesToStatStrings, tryParseTranslation, getRollOrMinmaxAvg } from './s
 import { ItemCategory } from './meta'
 import { IncursionRoom, ParsedItem, ItemInfluence, ItemRarity } from './ParsedItem'
 import { magicBasetype } from './magic-name'
-import { isModInfoLine, groupLinesByMod, parseModInfoLine, parseModType, ModifierInfo, ParsedModifier, ENCHANT_LINE, SCOURGE_LINE } from './advanced-mod-desc'
+import { isModInfoLine, groupLinesByMod, parseModInfoLine, parseModType, ModifierInfo, ParsedModifier, ENCHANT_LINE, SCOURGE_LINE, IMPLICIT_LINE } from './advanced-mod-desc'
 import { calcPropPercentile, QUALITY_STATS } from './calc-q20'
 
 type SectionParseResult =
@@ -35,7 +35,6 @@ const parsers: Array<ParserFn | { virtual: VirtualParserFn }> = [
   parseSynthesised,
   parseCategoryByHelpText,
   { virtual: normalizeName },
-  { virtual: parseGemAltQuality },
   parseVaalGemName,
   { virtual: findInDatabase },
   // -----------
@@ -55,6 +54,7 @@ const parsers: Array<ParserFn | { virtual: VirtualParserFn }> = [
   parseAreaLevel,
   parseAtzoatlRooms,
   parseMirroredTablet,
+  parseFilledCoffin,
   parseMirrored,
   parseSentinelCharge,
   parseLogbookArea,
@@ -113,7 +113,9 @@ export function parseClipboard (clipboard: string): Result<ParsedItem, string> {
 
 function itemTextToSections (text: string) {
   const lines = text.split(/\r?\n/)
-  lines.pop()
+  if (lines[lines.length - 1] === '') {
+    lines.pop()
+  }
 
   const sections: string[][] = [[]]
   lines.reduce((section, line) => {
@@ -272,17 +274,33 @@ function pickCorrectVariant (item: ParserState) {
 }
 
 function parseNamePlate (section: string[]) {
-  if (section.length < 3 ||
-      !section[0].startsWith(_$.ITEM_CLASS) ||
-      !section[1].startsWith(_$.RARITY)) {
+  let line = section.shift()
+  if (!line?.startsWith(_$.ITEM_CLASS)) {
     return err('item.parse_error')
   }
+
+  line = section.shift()
+  let rarityText: string | undefined
+  if (line?.startsWith(_$.RARITY)) {
+    rarityText = line.slice(_$.RARITY.length)
+    line = section.shift()
+  }
+
+  let name: string
+  if (line != null) {
+    name = markupConditionParser(line)
+  } else {
+    return err('item.parse_error')
+  }
+
+  line = section.shift()
+  const baseType = line && markupConditionParser(line)
 
   const item: ParserState = {
     rarity: undefined,
     category: undefined,
-    name: markupConditionParser(section[2]),
-    baseType: (section.length >= 4) ? markupConditionParser(section[3]) : undefined,
+    name: name,
+    baseType: baseType,
     isUnidentified: false,
     isCorrupted: false,
     newMods: [],
@@ -294,32 +312,22 @@ function parseNamePlate (section: string[]) {
     rawText: undefined!
   }
 
-  const rarityText = section[1].slice(_$.RARITY.length)
   switch (rarityText) {
     case _$.RARITY_CURRENCY:
-      item.category = ItemCategory.Currency
-      break
+      item.category = ItemCategory.Currency; break
     case _$.RARITY_DIVCARD:
-      item.category = ItemCategory.DivinationCard
-      break
+      item.category = ItemCategory.DivinationCard; break
     case _$.RARITY_GEM:
-      item.category = ItemCategory.Gem
-      break
+      item.category = ItemCategory.Gem; break
     case _$.RARITY_NORMAL:
     case _$.RARITY_QUEST:
-      item.rarity = ItemRarity.Normal
-      break
+      item.rarity = ItemRarity.Normal; break
     case _$.RARITY_MAGIC:
-      item.rarity = ItemRarity.Magic
-      break
+      item.rarity = ItemRarity.Magic; break
     case _$.RARITY_RARE:
-      item.rarity = ItemRarity.Rare
-      break
+      item.rarity = ItemRarity.Rare; break
     case _$.RARITY_UNIQUE:
-      item.rarity = ItemRarity.Unique
-      break
-    default:
-      return err('item.unknown')
+      item.rarity = ItemRarity.Unique; break
   }
 
   return ok(item)
@@ -391,9 +399,16 @@ function parseUnidentified (section: string[], item: ParsedItem) {
 }
 
 function parseItemLevel (section: string[], item: ParsedItem) {
-  if (section[0].startsWith(_$.ITEM_LEVEL)) {
-    item.itemLevel = Number(section[0].slice(_$.ITEM_LEVEL.length))
-    return 'SECTION_PARSED'
+  let prefix = _$.ITEM_LEVEL
+  if (item.info.refName === 'Filled Coffin') {
+    prefix = _$.CORPSE_LEVEL
+  }
+
+  for (const line of section) {
+    if (line.startsWith(prefix)) {
+      item.itemLevel = Number(line.slice(prefix.length))
+      return 'SECTION_PARSED'
+    }
   }
   return 'SECTION_SKIPPED'
 }
@@ -412,15 +427,8 @@ function parseVaalGemName (section: string[], item: ParserState) {
   // TODO blocked by https://www.pathofexile.com/forum/view-thread/3231236
   if (section.length === 1) {
     let gemName: string | undefined
-    if ((gemName = _$.QUALITY_ANOMALOUS.exec(section[0])?.[1])) {
-      item.gemAltQuality = 'Anomalous'
-    } else if ((gemName = _$.QUALITY_DIVERGENT.exec(section[0])?.[1])) {
-      item.gemAltQuality = 'Divergent'
-    } else if ((gemName = _$.QUALITY_PHANTASMAL.exec(section[0])?.[1])) {
-      item.gemAltQuality = 'Phantasmal'
-    } else if (ITEM_BY_TRANSLATED('GEM', section[0])) {
+    if (ITEM_BY_TRANSLATED('GEM', section[0])) {
       gemName = section[0]
-      item.gemAltQuality = 'Superior'
     }
     if (gemName) {
       item.name = ITEM_BY_TRANSLATED('GEM', gemName)![0].refName
@@ -443,24 +451,6 @@ function parseGem (section: string[], item: ParsedItem) {
     return 'SECTION_PARSED'
   }
   return 'SECTION_SKIPPED'
-}
-
-function parseGemAltQuality (item: ParserState) {
-  if (item.category !== ItemCategory.Gem) return
-
-  let gemName: string | undefined
-  if ((gemName = _$REF.QUALITY_ANOMALOUS.exec(item.name)?.[1])) {
-    item.gemAltQuality = 'Anomalous'
-  } else if ((gemName = _$REF.QUALITY_DIVERGENT.exec(item.name)?.[1])) {
-    item.gemAltQuality = 'Divergent'
-  } else if ((gemName = _$REF.QUALITY_PHANTASMAL.exec(item.name)?.[1])) {
-    item.gemAltQuality = 'Phantasmal'
-  } else {
-    item.gemAltQuality = 'Superior'
-  }
-  if (gemName) {
-    item.name = gemName
-  }
 }
 
 function parseStackSize (section: string[], item: ParsedItem) {
@@ -862,6 +852,20 @@ function parseMirroredTablet (section: string[], item: ParsedItem) {
       })
     }
   }
+
+  return 'SECTION_PARSED'
+}
+
+function parseFilledCoffin (section: string[], item: ParsedItem) {
+  if (item.info.refName !== 'Filled Coffin') return 'PARSER_SKIPPED'
+  if (!section.some(line => line.endsWith(IMPLICIT_LINE))) return 'SECTION_SKIPPED'
+
+  const { lines } = parseModType(section)
+  const modInfo: ModifierInfo = {
+    type: ModifierType.Necropolis,
+    tags: []
+  }
+  parseStatsFromMod(lines, item, { info: modInfo, stats: [] })
 
   return 'SECTION_PARSED'
 }

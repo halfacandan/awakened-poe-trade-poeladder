@@ -35,6 +35,7 @@
             <ui-radio class="mt-3" v-model="filters.trade.currency" :value="undefined">{{ t(':currency_any') }}</ui-radio>
             <ui-radio v-model="filters.trade.currency" value="chaos">{{ t(':currency_only_chaos') }}</ui-radio>
             <ui-radio v-model="filters.trade.currency" value="divine">{{ t(':currency_only_div') }}</ui-radio>
+            <ui-radio v-model="filters.trade.currency" value="chaos_divine">{{ t(':currency_chaos_div') }}</ui-radio>
           </template>
         </div>
       </div>
@@ -43,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { useI18nNs } from '@/web/i18n'
 import type { ItemFilters } from '../filters/interfaces'
 import { useLeagues } from '@/web/background/Leagues'
@@ -65,13 +66,7 @@ export default defineComponent({
 
     return {
       t,
-      tradeLeagues: computed(() => {
-        const { isRuthless } = leagues.selected.value!
-        return leagues.list.value.filter(league => {
-          if (!isRuthless && league.isRuthless) return false
-          return true
-        })
-      }),
+      tradeLeagues: leagues.list,
       showLeagueName: () => leagues.selectedId.value !== props.filters.trade.league,
       showWarning: () => Boolean(
         (props.filters.trade.listed &&

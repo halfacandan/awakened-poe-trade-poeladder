@@ -28,6 +28,7 @@
 
   "Blighted": "Blighted",
   "Blight-ravaged": "Blight-ravaged",
+  "Magic": "Magic",
   "Shaper": "Shaper",
   "Elder": "Elder",
   "Crusader": "Crusader",
@@ -53,9 +54,9 @@
     "crit": "Critical Strike Chance: {0}%",
     "aps": "Attacks per Second: {0}",
     "has_empty_modifier": "1 Empty or Crafted Modifier",
-    "has_empty_affix": "Любое",
-    "has_empty_prefix": "Префикс",
-    "has_empty_suffix": "Суффикс",
+    "has_empty_affix": "Any",
+    "has_empty_prefix": "Prefix",
+    "has_empty_suffix": "Suffix",
     "item_level": "Item Level: {0}",
     "stock": "Stock: {0}",
     "map_tier": "Map Tier: {0}",
@@ -129,7 +130,9 @@
     "heistequipment_heistweapon": "Heist Gear",
     "heistequipment_heistutility": "Heist Cloak",
     "accessory_trinket": "Trinket",
-    "sanctum_relic": "Sanctum Relic"
+    "sanctum_relic": "Sanctum Relic",
+    "azmeri_tincture": "Tincture",
+    "azmeri_charm": "Charm"
   },
   "filters": {
     "selected_some": "{0} of {1}, stats",
@@ -183,7 +186,8 @@
     "listed_2months": "2 Months Ago",
     "currency_any": "Any Currency",
     "currency_only_chaos": "Chaos Orb",
-    "currency_only_div": "Divine Orb"
+    "currency_only_div": "Divine Orb",
+    "currency_chaos_div": "Both Orbs"
   },
   "widget": {
     "title": "widget title",
@@ -220,6 +224,7 @@
     "reset_key": "Reset"
   },
   "stash_search": {
+    "enable_keys": "Keys",
     "name": "Stash search",
     "search_text": "search text or regex",
     "friendly_name": "friendly name"

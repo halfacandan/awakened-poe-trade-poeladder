@@ -48,9 +48,123 @@
         const error = shallowRef<string | null>(null)
         const searchResult = shallowRef<UniqueItem | null>(null)
 
-        async function search (uniqueName: string|null = null, uniqueIdentfier: string|null = null, accountName: string|null = null, ladderIdentifier: string|null = null) {
+        async function search(
+            uniqueName: string|null = null,
+            uniqueIdentfier: string|null = null,
+            accountName: string|null = null,
+            ladderIdentifier: string|null = null,
+            uniqueItemBase: string|null = null,
+            uniqueItemBaseImplicit: string|null = null,
+            uniqueItemMapTier: number|null = null,
+            uniqueRawText: string|null = null
+        ) {
 
-            var url = `https://poeladder.com/api/v1/users/${accountName}/ladders/${ladderIdentifier}/uniques/${uniqueIdentfier}/?disambiguation=1`
+            // Check for multiple bases
+            var disambiguation = 1;
+            switch(uniqueIdentfier){
+                case "Beacon_of_Madness":
+
+                    disambiguation = (uniqueRawText?.indexOf("chance to deal Double Damage") ?? -1) >= 0 ? 2 : (uniqueRawText?.indexOf("Conflux while affected") ?? -1) >= 0 ? 3 : 1; // 1 = Chaos
+
+                    break;
+
+                case "Combat_Focus":
+
+                    disambiguation = uniqueItemBase == "Viridian Jewel" ? 2 : uniqueItemBase == "Cobalt Jewel" ? 3 : 1; // 1 = Crimson Jewel
+
+                    break;
+
+                case "Doryanis_Delusion":
+
+                    disambiguation = uniqueItemBase == "Slink Boots" ? 2 : uniqueItemBase == "Sorcerer Boots" ? 3 : 1; // 1 = Titan Greaves
+
+                    break;
+
+                case "Grand_Spectrum":
+
+                    switch(uniqueItemBase){
+
+                        case "Cobalt Jewel":
+
+                            disambiguation = (uniqueRawText?.indexOf("Critical Strike Multiplier") ?? -1) >= 0 ? 2 : (uniqueRawText?.indexOf("Critical Strike Chance") ?? -1) >= 0 ? 7 : 9; // 1 = Max Power
+                            break;
+
+                        case "Crimson Jewel":
+                            
+                            disambiguation = (uniqueRawText?.indexOf("Maximum Life") ?? -1) >= 0 ? 5 : (uniqueRawText?.indexOf("Elemental Resistances") ?? -1) >= 0 ? 6 : 1; // 1 = Minimum Endurance
+                            break;
+
+                        case "Viridian Jewel":
+                            
+                            disambiguation = (uniqueRawText?.indexOf("Avoid Elemental Ailments") ?? -1) >= 0 ? 3 : (uniqueRawText?.indexOf("increased Elemental Damage") ?? -1) >= 0 ? 4 : 8; // 8 = Minimum Frenzy
+                            break;
+                        
+                        default:
+                            disambiguation = 1;
+                    }
+
+                    break;
+
+                case "Impresence":
+
+                    disambiguation = (uniqueRawText?.indexOf("Despair") ?? -1) >= 0 ? 2 : (uniqueRawText?.indexOf("Vulnerability") ?? -1) >= 0 ? 3 : (uniqueRawText?.indexOf("Conductivity") ?? -1) >= 0 ? 4 : (uniqueRawText?.indexOf("Frostbite") ?? -1) >= 0 ? 5 : 1; // 1 = Flammability
+
+                    break;
+
+                case "Lord_of_Steel":
+
+                    disambiguation = (uniqueRawText?.indexOf("chance to Impale Enemies") ?? -1) >= 0 ? 2 : (uniqueRawText?.indexOf("Overwhelms") ?? -1) >= 0 ? 3 : 1; // 1 = Impale Effect
+
+                    break;
+
+                case "Precursors_Emblem":
+
+                    switch(uniqueItemBase){
+
+                        case "Two-Stone Ring":
+                            disambiguation = (uniqueRawText?.indexOf("Dexterity and Intelligence") ?? -1) >= 0 ? 2 : (uniqueRawText?.indexOf("Strength and Dexterity") ?? -1) >= 0 ? 3 : 1; // 1 = Strength and Intelligence
+                            break;
+
+                        case "Topaz Ring":
+                            disambiguation = 4;
+                            break;
+                        
+                        case "Sapphire Ring":
+                            disambiguation = 5;
+                            break;
+                                                    
+                        case "Ruby Ring":
+                            disambiguation = 6;
+                            break;
+                                                    
+                        case "Prismatic Ring":
+                            disambiguation = 7;
+                            break;
+                        
+                        default:
+                            disambiguation = 1;
+                    }                 
+
+                    break;
+
+                case "The_Beachhead":
+
+                    disambiguation = uniqueItemMapTier == 10 ? 2 : uniqueItemMapTier == 5 ? 3 : 1; // 1 = 15
+
+                    break;
+
+                case "Volkuurs_Guidance":
+
+                    disambiguation = (uniqueRawText?.indexOf("Cold Damage to Spells") ?? -1) >= 0 ? 2 : (uniqueRawText?.indexOf("Fire Damage to Spells") ?? -1) >= 0 ? 3 : 1; // 1 = Lightning Damage to Spells
+
+                    break;
+
+                default:
+
+                    disambiguation = 1;
+            }
+
+            var url = `https://poeladder.com/api/v1/users/${accountName}/ladders/${ladderIdentifier}/uniques/${uniqueIdentfier}/?disambiguation=${disambiguation}&baseItem=${encodeURIComponent(uniqueItemBase ?? "")}&baseImplicit=${uniqueItemBaseImplicit}`
 
             if(!isNullOrEmptyString(uniqueIdentfier) && !isNullOrEmptyString(accountName) && !isNullOrEmptyString(ladderIdentifier)){
 
@@ -108,10 +222,16 @@
 
                         const uniqueName = props.item.info.name;
                         const uniqueIdentfier = decodeURIComponent(uniqueName).replace(/[^a-zA-Z0-9_\s]/g,'').replace(/\s/g, "_");
+                        const uniqueItemBase = props.item.info.unique?.base;
+                        const uniqueItemBaseImplicit = encodeURIComponent(props.item.statsByType.filter(function (stat) {
+                            return stat.type == "implicit";
+                        })[0]?.stat?.ref ?? "");
+                        const uniqueItemMapTier = props.item.mapTier;
+                        const uniqueRawText = props.item.rawText;
                         const ladderIdentifier = "SSF_" + AppConfig().leagueId;
                         const accountName = AppConfig().accountName;
 
-                        await search(uniqueName, uniqueIdentfier, accountName, ladderIdentifier);
+                        await search(uniqueName, uniqueIdentfier, accountName, ladderIdentifier, uniqueItemBase, uniqueItemBaseImplicit, uniqueItemMapTier, uniqueRawText);
 
                     } else {
 

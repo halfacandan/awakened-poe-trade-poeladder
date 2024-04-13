@@ -51,7 +51,7 @@ Complete the steps in **1. Set up the project** prior to attempting this
 
 ### 3. How to run in Dev mode
 
-Complete the steps in **1. Set up the project** prior to attempting this
+Complete the steps in **1. Set up the project** & **2. How to build the project** prior to attempting this
 
 1) Open a cmd window
 2) cd ..\awakened-poe-trade-poeladder\renderer
@@ -72,7 +72,7 @@ Complete the steps in **2. How to build the project** prior to attempting this
 
 ### 5. How to debug an installation
 
-The packaging process is dependent upon two separate builds: the "renderer" folder and the "main" folder. It then packages both of these up in to **%AppData%\Local\Programs\Awakened PoE Trade\resources\app.asar** based on the commands in **electron-builder.yml**.
+The packaging process is dependent upon two separate builds: the "renderer" folder and the "main" folder. It then packages both of these up in to **%LocalAppData%\Programs\Awakened PoE Trade\resources\app.asar** based on the commands in **electron-builder.yml**.
 
 You can manually edit the compiled app.asar file by:
 1) [Installing 7-Zip (64-bit)](https://www.7-zip.org/download.html)

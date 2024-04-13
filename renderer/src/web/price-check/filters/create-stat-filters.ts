@@ -31,7 +31,7 @@ export function createExactStatFilters (
     !item.isSynthesised
   ) return []
 
-  const keepByType = [ModifierType.Pseudo, ModifierType.Fractured, ModifierType.Enchant]
+  const keepByType = [ModifierType.Pseudo, ModifierType.Fractured, ModifierType.Enchant, ModifierType.Necropolis]
 
   if (
     !item.influences.length &&
@@ -101,7 +101,9 @@ export function createExactStatFilters (
     applyFlaskRules(ctx.filters)
   } else if (
     item.category === ItemCategory.MemoryLine ||
-    item.category === ItemCategory.SanctumRelic
+    item.category === ItemCategory.SanctumRelic ||
+    item.category === ItemCategory.Charm ||
+    item.category === ItemCategory.Tincture
   ) {
     enableAllFilters(ctx.filters)
   }
@@ -239,6 +241,23 @@ export function calculatedStatToFilter (
   }
 
   if (roll && !filter.option) {
+    if (item.rarity === ItemRarity.Magic && (
+      item.isUnmodifiable || item.isCorrupted || item.isMirrored
+    )) {
+      percent = 0
+    } else if (
+      item.rarity === ItemRarity.Unique ||
+      calc.sources.some(({ modifier }) => modifier.info.tier === 1 && modifier.info.type === ModifierType.Fractured)
+    ) {
+      const perfectRoll = (
+        (calc.stat.better === StatBetter.PositiveRoll && roll.value >= roll.max) ||
+        (calc.stat.better === StatBetter.NegativeRoll && roll.value <= roll.min)
+      )
+      if (perfectRoll) {
+        percent = 0
+      }
+    }
+
     const dp =
     calc.stat.dp ||
     calc.sources.some(s => s.stat.stat.ref === calc.stat.ref && s.stat.roll!.dp)

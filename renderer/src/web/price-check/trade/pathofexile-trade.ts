@@ -46,7 +46,9 @@ export const CATEGORY_TO_TRADE_ID = new Map([
   [ItemCategory.HeistGear, 'heistequipment.heistweapon'],
   [ItemCategory.HeistCloak, 'heistequipment.heistutility'],
   [ItemCategory.Trinket, 'accessory.trinket'],
-  [ItemCategory.SanctumRelic, 'sanctum.relic']
+  [ItemCategory.SanctumRelic, 'sanctum.relic'],
+  [ItemCategory.Tincture, 'azmeri.tincture'],
+  [ItemCategory.Charm, 'azmeri.charm']
 ])
 
 const TOTAL_MODS_TEXT = {
@@ -123,10 +125,10 @@ interface TradeRequest { /* eslint-disable camelcase */
           quality?: FilterRange
           gem_level?: FilterRange
           corrupted?: FilterBoolean
+          fractured_item?: FilterBoolean
           mirrored?: FilterBoolean
           identified?: FilterBoolean
           stack_size?: FilterRange
-          gem_alternate_quality?: { option: '0' | '1' | '2' | '3' }
         }
       }
       armour_filters?: {
@@ -205,6 +207,7 @@ interface FetchResult {
     properties?: Array<{
       values: [[string, number]]
       type:
+      78 | // Corpse Level (Filled Coffin)
       30 | // Spawns a Level %0 Monster when Harvested
       6 | // Quality
       5 // Level
@@ -224,7 +227,7 @@ interface FetchResult {
 
 export interface PricingResult {
   id: string
-  itemLevel?: number
+  itemLevel?: string
   stackSize?: number
   corrupted?: boolean
   quality?: string
@@ -301,8 +304,11 @@ export function createTradeRequest (filters: ItemFilters, stats: StatFilter[], i
     }
   }
 
-  if (filters.corrupted?.value === false) {
-    propSet(query.filters, 'misc_filters.filters.corrupted.option', String(false))
+  if (filters.corrupted?.value === false || filters.corrupted?.exact) {
+    propSet(query.filters, 'misc_filters.filters.corrupted.option', String(filters.corrupted.value))
+  }
+  if (filters.fractured?.value === false) {
+    propSet(query.filters, 'misc_filters.filters.fractured_item.option', String(false))
   }
   if (filters.mirrored) {
     if (filters.mirrored.disabled) {
@@ -358,23 +364,6 @@ export function createTradeRequest (filters: ItemFilters, stats: StatFilter[], i
 
   if (filters.unidentified && !filters.unidentified.disabled) {
     propSet(query.filters, 'misc_filters.filters.identified.option', String(false))
-  }
-
-  if (filters.altQuality && !filters.altQuality.disabled) {
-    switch (filters.altQuality.value) {
-      case 'Superior':
-        propSet(query.filters, 'misc_filters.filters.gem_alternate_quality.option', '0')
-        break
-      case 'Anomalous':
-        propSet(query.filters, 'misc_filters.filters.gem_alternate_quality.option', '1')
-        break
-      case 'Divergent':
-        propSet(query.filters, 'misc_filters.filters.gem_alternate_quality.option', '2')
-        break
-      case 'Phantasmal':
-        propSet(query.filters, 'misc_filters.filters.gem_alternate_quality.option', '3')
-        break
-    }
   }
 
   if (filters.areaLevel && !filters.areaLevel.disabled) {
@@ -588,7 +577,7 @@ export async function requestResults (
   return data.map<PricingResult>(result => {
     return {
       id: result.id,
-      itemLevel: result.item.ilvl,
+      itemLevel: result.item.properties?.find(prop => prop.type === 78)?.values[0][0] ?? String(result.item.ilvl),
       stackSize: result.item.stackSize,
       corrupted: result.item.corrupted,
       quality: result.item.properties?.find(prop => prop.type === 6)?.values[0][0],

@@ -1,7 +1,7 @@
 import type { ModifierType, StatCalculated } from './modifiers'
-import type { ItemCategory } from './meta'
 import type { ParsedModifier } from './advanced-mod-desc'
 import type { BaseType } from '@/assets/data'
+import { ItemCategory } from './meta'
 
 export enum ItemRarity {
   Normal = 'Normal',
@@ -35,7 +35,6 @@ export interface ParsedItem {
   mapBlighted?: 'Blighted' | 'Blight-ravaged'
   mapTier?: number
   gemLevel?: number
-  gemAltQuality?: 'Anomalous' | 'Divergent' | 'Phantasmal' | 'Superior'
   areaLevel?: number
   talismanTier?: number
   quality?: number
@@ -74,4 +73,19 @@ export interface ParsedItem {
 export enum IncursionRoom {
   Open = 1,
   Obstructed = 2
+}
+
+export function createVirtualItem (
+  props: Partial<ParsedItem> & Pick<ParsedItem, 'info'>
+): ParsedItem {
+  return {
+    ...props,
+    isUnidentified: props.isUnidentified ?? false,
+    isCorrupted: props.isCorrupted ?? false,
+    newMods: props.newMods ?? [],
+    statsByType: props.statsByType ?? [],
+    unknownModifiers: props.unknownModifiers ?? [],
+    influences: props.influences ?? [],
+    rawText: 'VIRTUAL_ITEM'
+  }
 }

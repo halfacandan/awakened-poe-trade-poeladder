@@ -76,7 +76,7 @@ export interface BaseType {
   gem?: {
     vaal?: true
     awakened?: true
-    altQuality?: string[]
+    transfigured?: true
     normalVariant?: BaseType['refName']
   }
   armour?: {
@@ -100,6 +100,7 @@ export interface TranslationDict {
   RARITY: string
   ITEM_CLASS: string
   ITEM_LEVEL: string
+  CORPSE_LEVEL: string
   TALISMAN_TIER: string
   GEM_LEVEL: string
   STACK_SIZE: string

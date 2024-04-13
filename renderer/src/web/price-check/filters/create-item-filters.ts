@@ -87,6 +87,12 @@ export function createFilters (
         disabled: false
       }
     }
+    if (item.info.refName === 'Filled Coffin') {
+      filters.itemLevel = {
+        value: item.itemLevel!,
+        disabled: false
+      }
+    }
     return filters
   }
 
@@ -162,7 +168,11 @@ export function createFilters (
       let disabled = opts.exact
       if (item.category === ItemCategory.ClusterJewel) {
         disabled = true
-      } else if (item.category === ItemCategory.SanctumRelic) {
+      } else if (
+        item.category === ItemCategory.SanctumRelic ||
+        item.category === ItemCategory.Charm ||
+        item.category === ItemCategory.Tincture
+      ) {
         disabled = false
       }
       filters.searchRelaxed = {
@@ -202,6 +212,11 @@ export function createFilters (
     }
   }
 
+  const forAdornedJewel = (
+    item.rarity === ItemRarity.Magic &&
+    item.isCorrupted &&
+    (item.category === ItemCategory.Jewel || item.category === ItemCategory.AbyssJewel))
+
   if (!item.isUnmodifiable && (
     item.rarity === ItemRarity.Normal ||
     item.rarity === ItemRarity.Magic ||
@@ -209,11 +224,16 @@ export function createFilters (
     item.rarity === ItemRarity.Unique
   )) {
     filters.corrupted = {
-      value: item.isCorrupted
+      value: item.isCorrupted,
+      exact: forAdornedJewel
     }
   }
 
-  if (
+  if (forAdornedJewel) {
+    filters.rarity = {
+      value: 'magic'
+    }
+  } else if (
     item.rarity === ItemRarity.Normal ||
     item.rarity === ItemRarity.Magic ||
     item.rarity === ItemRarity.Rare
@@ -225,6 +245,10 @@ export function createFilters (
 
   if (item.isMirrored) {
     filters.mirrored = { disabled: false }
+  }
+
+  if (!item.isFractured && opts.exact) {
+    filters.fractured = { value: false }
   }
 
   if (item.isFoil) {
@@ -247,6 +271,8 @@ export function createFilters (
       item.category !== ItemCategory.HeistContract &&
       item.category !== ItemCategory.MemoryLine &&
       item.category !== ItemCategory.SanctumRelic &&
+      item.category !== ItemCategory.Tincture &&
+      item.category !== ItemCategory.Charm &&
       item.info.refName !== 'Expedition Logbook'
     ) {
       if (item.category === ItemCategory.ClusterJewel) {
@@ -320,17 +346,19 @@ function createGemFilters (
   filters: ItemFilters,
   opts: CreateOptions
 ) {
-  filters.searchExact = {
-    baseType: item.info.name,
-    baseTypeTrade: t(opts, item.info)
-  }
-
-  if (item.info.gem!.vaal) {
+  if (!item.info.gem!.transfigured) {
+    filters.searchExact = {
+      baseType: item.info.name,
+      baseTypeTrade: t(opts, item.info)
+    }
+  } else {
     const normalGem = ITEM_BY_REF('GEM', item.info.gem!.normalVariant!)![0]
-    filters.searchRelaxed = {
-      baseType: normalGem.name,
-      baseTypeTrade: t(opts, normalGem),
-      disabled: true
+    filters.searchExact = {
+      baseType: item.info.name,
+      baseTypeTrade: t(opts, normalGem)
+    }
+    filters.discriminator = {
+      trade: item.info.tradeDisc!
     }
   }
 
@@ -354,18 +382,13 @@ function createGemFilters (
     return filters
   }
 
-  filters.altQuality = {
-    value: item.gemAltQuality!,
-    disabled: false
-  }
-
   if (SPECIAL_SUPPORT_GEM.includes(item.info.refName)) {
     filters.gemLevel = {
       value: item.gemLevel!,
       disabled: (item.gemLevel! < 3)
     }
 
-    if (item.gemAltQuality !== 'Superior' && item.isCorrupted && item.quality) {
+    if (item.isCorrupted && item.quality) {
       filters.quality = {
         value: item.quality,
         disabled: true
@@ -394,7 +417,7 @@ function t (opts: CreateOptions, info: BaseType) {
   return (opts.useEn) ? info.refName : info.name
 }
 
-function floorToBracket (value: number, brackets: readonly number[]) {
+export function floorToBracket (value: number, brackets: readonly number[]) {
   let prev = brackets[0]
   for (const num of brackets) {
     if (num > value) {

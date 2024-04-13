@@ -31,7 +31,7 @@ app.on('ready', async () => {
   const gameConfig = new GameConfig(eventPipe, logger)
   const poeWindow = new GameWindow()
   const appUpdater = new AppUpdater(eventPipe)
-  const httpProxy = new HttpProxy(server)
+  const httpProxy = new HttpProxy(server, logger)
 
   setTimeout(
     async () => {
@@ -41,8 +41,8 @@ app.on('ready', async () => {
       eventPipe.onEventAnyClient('CLIENT->MAIN::update-host-config', (cfg) => {
         overlay.updateOpts(cfg.overlayKey, cfg.windowTitle)
         shortcuts.updateActions(cfg.shortcuts, cfg.stashScroll, cfg.logKeys, cfg.restoreClipboard, cfg.language)
-        gameLogWatcher.restart(cfg.clientLog)
-        gameConfig.readConfig(cfg.gameConfig)
+        gameLogWatcher.restart(cfg.clientLog ?? '')
+        gameConfig.readConfig(cfg.gameConfig ?? '')
         appUpdater.checkAtStartup()
         tray.overlayKey = cfg.overlayKey
       })

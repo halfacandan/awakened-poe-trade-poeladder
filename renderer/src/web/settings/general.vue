@@ -6,13 +6,14 @@
         <option value="en">English</option>
         <option value="ru">Русский</option>
         <option value="cmn-Hant">正體中文</option>
+        <option value="ko">한국어</option>
       </select>
     </div>
     <div class="mb-4" v-if="language === 'cmn-Hant'">
       <div class="flex-1 mb-1">{{ t('realm') }}</div>
       <div class="flex gap-x-4">
         <ui-radio v-model="realm" value="pc-ggg">{{ t('realm_intl') }}</ui-radio>
-        <ui-radio v-model="realm" value="pc-garena">{{ t('Garena') }}</ui-radio>
+        <ui-radio v-model="realm" value="pc-garena">{{ t('Hotcool') }}</ui-radio>
       </div>
     </div>
     <div class="mb-4">

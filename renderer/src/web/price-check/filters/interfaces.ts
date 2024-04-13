@@ -20,7 +20,7 @@ export interface ItemFilters {
   searchExact: SearchFilter
   searchRelaxed?: SearchFilter & { disabled: boolean }
   discriminator?: {
-    value: string
+    value?: string
     trade: string
   }
   rarity?: {
@@ -29,6 +29,10 @@ export interface ItemFilters {
   linkedSockets?: FilterNumeric
   whiteSockets?: FilterNumeric
   corrupted?: {
+    value: boolean
+    exact?: boolean
+  }
+  fractured?: {
     value: boolean
   }
   mirrored?: {
@@ -55,10 +59,6 @@ export interface ItemFilters {
   }
   veiled?: {
     statRefs: string[]
-    disabled: boolean
-  }
-  altQuality?: {
-    value: NonNullable<ParsedItem['gemAltQuality']>
     disabled: boolean
   }
   areaLevel?: FilterNumeric
