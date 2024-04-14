@@ -13,6 +13,8 @@ To get started, you can either build the app yourself using the instructions bel
 
 ### Using the App
 
+You can pick up the [latest version of the application on the 'Releases' page](https://github.com/halfacandan/awakened-poe-trade-poeladder/releases). Just download and run the executable to install the application. Note that this will overwrite any existing installation of Awakened PoE Trade (both the original version and the PoE Ladder version).
+
 Once you have installed the app, just hover over a unique item in the PoE client and use the **Ctrl + D** command to look up the item.
 
 If you haven't set up your account in the app then you will see a set of instructions like those shown below:
