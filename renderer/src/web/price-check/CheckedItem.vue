@@ -17,7 +17,13 @@
       @preset="selectPreset"
       @submit="doSearch = true" />
     <trade-listing
-      v-if="tradeAPI === 'trade' && doSearch"
+      v-if="tradeAPI === 'trade' && !isUniqueItem && doSearch"
+      ref="tradeService"
+      :filters="itemFilters"
+      :stats="itemStats"
+      :item="item" />
+    <poe-ladder-listing
+      v-if="tradeAPI === 'trade' && isUniqueItem && doSearch"
       ref="tradeService"
       :filters="itemFilters"
       :stats="itemStats"
@@ -50,6 +56,7 @@ import { defineComponent, PropType, watch, ref, nextTick, computed, ComponentPub
 import { useI18n } from 'vue-i18n'
 import { ItemRarity, ItemCategory, ParsedItem } from '@/parser'
 import TradeListing from './trade/TradeListing.vue'
+import PoeLadderListing from '../poeladder-check/UniqueListing.vue'
 import TradeBulk from './trade/TradeBulk.vue'
 import TradeLinks from './trade/TradeLinks.vue'
 import { apiToSatisfySearch, getTradeEndpoint } from './trade/common'
@@ -72,6 +79,7 @@ export default defineComponent({
   components: {
     PricePrediction,
     TradeListing,
+    PoeLadderListing,
     TradeBulk,
     TradeLinks,
     PriceTrend,
@@ -98,6 +106,7 @@ export default defineComponent({
     const itemStats = computed(() => presets.value.presets.find(preset => preset.id === presets.value.active)!.stats)
     const doSearch = ref(false)
     const tradeAPI = ref<'trade' | 'bulk'>('bulk')
+    const isUniqueItem = ref(false)
 
     // TradeListing.vue OR TradeBulk.vue
     const tradeService = ref<{ execSearch(): void } | null>(null)
@@ -118,6 +127,8 @@ export default defineComponent({
           item.info.refName === prevItem.info.refName
         ) ? prevCurrency : undefined
       })
+      
+      isUniqueItem.value = (props.item.info.namespace == "UNIQUE") ?? false;
 
       if ((!props.advancedCheck && !widget.value.smartInitialSearch) ||
           (props.advancedCheck && !widget.value.lockedInitialSearch)) {
@@ -228,6 +239,7 @@ export default defineComponent({
       doSearch,
       tradeAPI,
       tradeService,
+      isUniqueItem,
       filtersComponent,
       showPredictedPrice,
       show,

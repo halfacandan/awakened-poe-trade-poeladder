@@ -26,3 +26,7 @@ yarn-error.log*
 # vitepress
 docs/.vitepress/dist
 docs/.vitepress/cache
+
+# Package lock files
+renderer/package-lock.json
+main/package-lock.json
