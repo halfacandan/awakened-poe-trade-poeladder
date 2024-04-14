@@ -74,6 +74,8 @@ Complete the steps in **2. How to build the project** prior to attempting this
 
 The packaging process is dependent upon two separate builds: the "renderer" folder and the "main" folder. It then packages both of these up in to **%LocalAppData%\Programs\Awakened PoE Trade\resources\app.asar** based on the commands in **electron-builder.yml**.
 
+An versioned installer is also available in **.\awakened-poe-trade-poeladder\main\dist**. This file should be uploaded to GitHub
+
 You can manually edit the compiled app.asar file by:
 1) [Installing 7-Zip (64-bit)](https://www.7-zip.org/download.html)
 2) [Installing the "Asar7z" plugin (64-bit)](https://www.tc4shell.com/en/7zip/asar/)
