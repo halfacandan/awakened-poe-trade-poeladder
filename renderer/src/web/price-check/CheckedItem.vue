@@ -142,6 +142,8 @@ export default defineComponent({
           (item.category === ItemCategory.SanctumRelic) ||
           (item.category === ItemCategory.Tincture) ||
           (item.category === ItemCategory.Charm) ||
+          (item.category === ItemCategory.Tincture) ||
+          (item.category === ItemCategory.Charm) ||
           (!CATEGORY_TO_TRADE_ID.has(item.category!)) ||
           (item.isUnidentified) ||
           (item.isVeiled)

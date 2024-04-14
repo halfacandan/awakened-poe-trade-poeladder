@@ -26,6 +26,34 @@ Here you can see an example of a unique in SSF Ancestor being compared to the ow
 If you don't already have the unique in a league then you'll see an error message like the one below:
 
 ![](./docs/guide/guide_00_poe_compare_03_temp_to_standard_not_found.png)
+# ![Awakener's Orb](https://web.poecdn.com/image/Art/2DItems/Currency/TransferOrb.png) Awakened PoE Trade - PoE Ladder Edition
+
+### Introduction
+
+[PoE Ladder](https://poeladder.com/) is a website that lets you track your unique item collections in Path of Exile's various Solo-Self Found leagues.
+
+This fork of [SnosMe's awakened-poe-trade app](https://github.com/SnosMe/awakened-poe-trade) replaces the price-checking feature with a lookup of PoE Ladder data for your account.  This will let you:
+  - Check whether you already own a unique in a selected league
+  - Compare the stats of the unique that you just found with the one that you own
+  - Do cross-league lookups e.g. Find an item in a temporary league like SSF Ancestor and look it up in your SSF Standard collection
+
+To get started, you can either build the app yourself using the instructions below or [join the PoE Ladder Discord](https://discord.gg/YppDk6b92c) to get the latest pre-build installer for the app.
+
+### Using the App
+
+Once you have installed the app, just hover over a unique item in the PoE client and use the **Ctrl + D** command to look up the item.
+
+If you haven't set up your account in the app then you will see a set of instructions like those shown below:
+
+![](./docs/guide/guide_00_poe_login_01_check.png)
+
+Here you can see an example of a unique in SSF Ancestor being compared to the owned version in SSF Standard:
+
+![](./docs/guide/guide_00_poe_compare_02_temp_to_standard.png)
+
+If you don't already have the unique in a league then you'll see an error message like the one below:
+
+![](./docs/guide/guide_00_poe_compare_03_temp_to_standard_not_found.png)
 
 ### Development
 
