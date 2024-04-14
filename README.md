@@ -49,7 +49,6 @@ Complete the steps in **1. Set up the project** prior to attempting this
 4) npm run make-index-files
 5) cd ..\main
 6) npm run build
-7) npm run package
 
 ### 3. How to run in Dev mode
 
