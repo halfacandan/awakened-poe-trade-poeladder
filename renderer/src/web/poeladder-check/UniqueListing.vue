@@ -274,8 +274,8 @@
     /* Uniques Hover */
 
     .hoverBox {
-        min-width: 350px;
-        max-width: 500px;
+        min-width: 430px;
+        max-width: 430px;
         text-align: center;
         font-family: FontinSmallCaps,Verdana,Arial,Helvetica,sans-serif;
         color: #ffffffde;
@@ -328,7 +328,7 @@
     .hoverBox .uniqueHover .banner.crusaderredeemer::before,
     .hoverBox .uniqueHover .banner.crusadershaper::after,
     .hoverBox .uniqueHover .banner.crusaderwarlord::before {
-    background-image: url(https://web.poecdn.com/protected/image/item/popup/crusader-symbol.png?v=1689575801910&key=dcLGV7cDJf-dulB8P_Q-yQ);
+        background-image: url(https://web.poecdn.com/protected/image/item/popup/crusader-symbol.png?v=1689575801910&key=dcLGV7cDJf-dulB8P_Q-yQ);
     }
 
     .hoverBox .uniqueHover .banner.hunter::before,
@@ -338,7 +338,7 @@
     .hoverBox .uniqueHover .banner.hunterredeemer::before,
     .hoverBox .uniqueHover .banner.huntershaper::after,
     .hoverBox .uniqueHover .banner.hunterwarlord::before {
-    background-image: url(https://web.poecdn.com/protected/image/item/popup/hunter-symbol.png?v=1689575801954&key=x7-F-t4jlxzMd1eJOUSafA);
+        background-image: url(https://web.poecdn.com/protected/image/item/popup/hunter-symbol.png?v=1689575801954&key=x7-F-t4jlxzMd1eJOUSafA);
     }
 
     .hoverBox .uniqueHover .banner.redeemer::before,
@@ -348,7 +348,7 @@
     .hoverBox .uniqueHover .banner.hunterredeemer::after,
     .hoverBox .uniqueHover .banner.redeemershaper::after,
     .hoverBox .uniqueHover .banner.redeemerwarlord::before {
-    background-image: url(https://web.poecdn.com/protected/image/item/popup/redeemer-symbol.png?v=1689575801958&key=nEc-TPctqwszY696cmlaZQ);
+        background-image: url(https://web.poecdn.com/protected/image/item/popup/redeemer-symbol.png?v=1689575801958&key=nEc-TPctqwszY696cmlaZQ);
     }
 
     .hoverBox .uniqueHover .banner.warlord::before,
@@ -358,7 +358,7 @@
     .hoverBox .uniqueHover .banner.hunterwarlord::after,
     .hoverBox .uniqueHover .banner.redeemerwarlord::after,
     .hoverBox .uniqueHover .banner.shaperwarlord::after { 
-    background-image: url(https://web.poecdn.com/protected/image/item/popup/warlord-symbol.png?v=1689575802134&key=76scs3jk3FrVGOLHdM5AuA);
+        background-image: url(https://web.poecdn.com/protected/image/item/popup/warlord-symbol.png?v=1689575802134&key=76scs3jk3FrVGOLHdM5AuA);
     }
 
     .hoverBox .uniqueHover .banner.veiled::before,
@@ -443,13 +443,14 @@
         content: "Corrupted";
     }
 
-    /*.hoverBox .uniqueHover .detail .flav, .hoverBox .uniqueHover .detail .mod {*/
     .hoverBox .uniqueHover .detail div {
-        min-width: 350px;
-        max-width: 500px;
+        min-width: 430px;
+        max-width: 430px;
         width: max-content; /* Allow flexible wrapping of text up to max width */
+        width: -webkit-max-content; /* Add fix for cutycapt clipping the foot of the image when it fails to resize to content */
         padding: 0 5px; /* Prevent text from banging up against the hover box */
         box-sizing: border-box; /* Allow these elements to resize the hover box */
+        -webkit-box-sizing: border-box;
         margin: 0 auto; /* Make sure these items are centered in the hover box when there is a size disparity */
     }
 
