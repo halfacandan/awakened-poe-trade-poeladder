@@ -164,7 +164,7 @@
                     disambiguation = 1;
             }
 
-            var url = `https://poeladder.com/api/v1/users/${accountName}/ladders/${ladderIdentifier}/uniques/${uniqueIdentfier}/?disambiguation=${disambiguation}&baseItem=${encodeURIComponent(uniqueItemBase ?? "")}&baseImplicit=${uniqueItemBaseImplicit}`
+            var url = `https://poeladder.com/api/v1/users/${accountName}/ladders/${ladderIdentifier}/uniques/${uniqueIdentfier}/?disambiguation=${disambiguation}&nullableResult=1&baseItem=${encodeURIComponent(uniqueItemBase ?? "")}&baseImplicit=${uniqueItemBaseImplicit}`
 
             if(!isNullOrEmptyString(uniqueIdentfier) && !isNullOrEmptyString(accountName) && !isNullOrEmptyString(ladderIdentifier)){
 
