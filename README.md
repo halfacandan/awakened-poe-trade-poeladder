@@ -49,20 +49,22 @@ Complete the steps in **1. Set up the project** prior to attempting this
 4) npm run make-index-files
 5) cd ..\main
 6) npm run build
-7) npm run package
 
 ### 3. How to run in Dev mode
 
-Complete the steps in **1. Set up the project** & **2. How to build the project** prior to attempting this
+Complete the steps in **1. Set up the project** prior to attempting this
 
-1) Open a cmd window
-2) cd ..\awakened-poe-trade-poeladder\renderer
-3) npm run dev
-4) Leave that window running
-5) Open the project in VSCode
-6) cd main
-7) npm run dev
-8) Start PoE
+1) Open the project in VSCode
+2) cd renderer
+3) npm run make-index-files
+4) Open a cmd window
+5) cd ..\awakened-poe-trade-poeladder\renderer
+6) npm run dev
+7) Leave that window running
+8) Open the project in VSCode
+9) cd main
+10) npm run dev
+11) Start PoE
 
 ### 4. How to create the installer
 
